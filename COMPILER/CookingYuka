@@ -1,0 +1,112 @@
+tanggal=$(date +"%d%m%y")
+string1=$(date +"%H:%M:%S")
+StartDate=$(date -u -d "$string1" +"%s")
+
+zipname=Yuka-Kernel-$tanggal-$versi-$device.zip
+pin=no
+
+rm $anykerneldir/Image.gz-dtb -f > /dev/null
+rm $anykerneldir/Image.gz -f > /dev/null
+
+echo [ Starting ]
+
+gcc_path=~/GCC_COMPILER/bin/aarch64-elf-
+rm -rf ~/GCC_COMPILER > /dev/null
+git clone https://github.com/najahiiii/priv-toolchains -b elf/gcc-9.2.0/arm64 --depth=1 ~/GCC_COMPILER
+toolchain=none
+export build_tags="#Yuka #GCC"
+
+
+if [ "$buildtype" == "dtc" ]; then
+	toolchain=~/DTC
+	rm -rf $toolchain > /dev/null
+	git clone https://github.com/NusantaraDevs/DragonTC.git --depth=1 $toolchain
+	export build_tags="#Yuka #DragonTC #DTC"
+elif [ "$buildtype" == "clang" ]; then
+	toolchain=~/CLANG
+	rm -rf $toolchain > /dev/null
+	wget -q https://kdrag0n.dev/files/redirector/proton_clang-latest.tar.zst
+	tar -I zstd -xf proton_clang-latest.tar.zst
+	rm proton_clang-latest.tar.zst
+	mv proton_clang-* $toolchain
+	export build_tags="#Yuka #Proton #Clang"
+fi
+
+
+anykerneldir=ak3
+rm -rf $anykerneldir > /dev/null
+if [ "$unified" == "true" ]; then
+	git clone https://github.com/AyraHikari/AnyKernel3.git -b unified $anykerneldir
+else
+	git clone https://github.com/AyraHikari/AnyKernel3.git $anykerneldir
+fi
+
+
+
+
+if [ $? -eq 0 ]; then
+	echo [ Cleaning ]
+	make clean
+	make mrproper
+fi
+
+
+echo [ Compiling ]
+
+if [ "$toolchain" != "none" ]; then
+	alias rolling="make ARCH=arm64 $defconfig && time make -j8 ARCH=arm64 CC=$toolchain CLANG_TRIPLE=aarch64-linux-android- CROSS_COMPILE="$gcc_path""
+	export CLANG_TCHAIN=$toolchain/bin/clang
+	if [ "$buildtype" == "dtc" ]; then
+		export KBUILD_COMPILER_STRING=$($CLANG_TCHAIN --version | head -n 1 | perl -pe 's/\(.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//' -e 's/DragonTC/Yuka Dragon/g')
+	elif [ "$buildtype" == "clang" ]; then
+		export KBUILD_COMPILER_STRING=$($CLANG_TCHAIN --version | head -n 1 | perl -pe 's/\(.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//' -e 's/Proton/Yuka Proton/g')
+	fi
+	echo "> Build version is: $KBUILD_COMPILER_STRING"
+	export KERNEL_BUILD=$KBUILD_COMPILER_STRING
+else
+	export KERNEL_BUILD="Yuka GCC-9.2.0"
+fi
+
+export ARCH=arm64
+export CROSS_COMPILE=$gcc_path
+export KBUILD_BUILD_USER=AyraHikari
+export KBUILD_BUILD_HOST=NusantaraDevs
+mkdir -p out
+make O=out $defconfig
+make O=out -j48
+if [ $? != 0 ]; then
+	echo "Build failed!"
+	exit 1
+fi
+
+
+if [ "$unified" == "true" ]; then
+	cp out/arch/arm64/boot/Image.gz $anykerneldir/kernel/
+else
+	cp out/arch/arm64/boot/Image.gz-dtb $anykerneldir/zImage
+fi
+
+
+echo [ Done! ]
+cd $anykerneldir/
+rm *.zip -f
+
+echo [ Compressing ]
+zip $zipname * -r
+if [ $? != 0 ]; then
+	echo "Build failed!"
+	exit 1
+fi
+
+
+echo [ Uploading ]
+
+string2=$(date +"%H:%M:%S")
+FinalDate=$(date -u -d "$string2" +"%s")
+elapsetime=$(date -u -d "0 $FinalDate sec - $StartDate sec" +"%H:%M:%S")
+
+export tempid=$(curl -s -F chat_id=$targetgrup -F document=@"$(echo *.zip)" -F parse_mode="markdown" https://api.telegram.org/bot$token/sendDocument | python3 -c "import json, sys; print(str(json.load(sys.stdin)['result']['message_id']))")
+
+curl -s -X POST https://api.telegram.org/bot$token/editMessageCaption?chat_id=$targetgrup -d "message_id=$tempid&parse_mode=markdown&caption=%60$(date '+%H:%M:%S - %d %b %Y')%60%0D%0A🌺 *Yuka Kernel* build $versi has done!%0A%0A✅ Status: _Successfully_%0A👨‍💻 By: [Ayra Hikari](tg://user?id=388576209)%0A🆚 Version: $versi ($KERNEL_BUILD)%0A📲 Device: $device%0A⏰ Time elapse: $elapsetime seconds%0A%0A$build_tags" > /dev/null
+
+echo [ Cooking done! ]

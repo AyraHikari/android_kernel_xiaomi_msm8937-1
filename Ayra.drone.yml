@@ -1,0 +1,72 @@
+kind: pipeline
+name: Ayra's Oven
+
+platform:
+  os: linux
+  arch: amd64
+
+clone:
+  depth: 1
+
+steps:
+  - name: GCC-9.2.0
+    image: ayrahikari/oven:latest
+    environment:
+      token:
+        from_secret: token
+      targetgrup:
+        from_secret: targetgrup
+      device: land
+      kerneldir: kernel
+      defconfig: land_defconfig
+      kernelname: Ayra Kernel
+      versi: v3.18.140
+      unified: true
+
+    commands:
+      - bash COMPILER/CookingYuka
+    when:
+      branch:
+        - lineage-16.0
+
+  - name: DRAGONTC-10
+    image: ayrahikari/oven:latest
+    environment:
+      token:
+        from_secret: token
+      targetgrup:
+        from_secret: targetgrup
+      device: land
+      kerneldir: kernel
+      defconfig: land_defconfig
+      kernelname: Ayra Kernel
+      versi: v3.18.140
+      unified: true
+      buildtype: dtc
+
+    commands:
+      - bash COMPILER/CookingYuka
+    when:
+      branch:
+        - lineage-16.0
+
+  - name: CLANG-10
+    image: ayrahikari/oven:latest
+    environment:
+      token:
+        from_secret: token
+      targetgrup:
+        from_secret: targetgrup
+      device: land
+      kerneldir: kernel
+      defconfig: land_defconfig
+      kernelname: Ayra Kernel
+      versi: v3.18.140
+      unified: true
+      buildtype: clang
+
+    commands:
+      - bash COMPILER/CookingYuka
+    when:
+      branch:
+        - lineage-16.0
