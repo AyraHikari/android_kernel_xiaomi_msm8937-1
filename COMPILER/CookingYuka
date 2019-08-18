@@ -73,7 +73,7 @@ if [ "$toolchain" != "none" ]; then
 	echo "> Build version is: $KBUILD_COMPILER_STRING"
 	export KERNEL_BUILD=$KBUILD_COMPILER_STRING
 else
-	export KERNEL_BUILD="Ayra GCC-9.2.0"
+	export KERNEL_BUILD="Yuka GCC-9.2.0"
 fi
 
 export ARCH=arm64
