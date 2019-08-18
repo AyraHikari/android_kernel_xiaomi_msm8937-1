@@ -13,7 +13,7 @@ toolchain=none
 
 if [ "$buildtype" == "dtc" ]; then
 	export toolchain=~/DTC
-	export gcc_path=~/GCC_COMPILER/bin/aarch64-linux-gnu-
+	export gcc_path=~/GCC_COMPILER/bin/aarch64-linux-android-
 	rm -rf ~/GCC_COMPILER > /dev/null
 	git clone https://github.com/najahiiii/aarch64-linux-gnu.git -b 4.9-mirror --depth=1 ~/GCC_COMPILER
 	rm -rf $toolchain > /dev/null
@@ -22,7 +22,7 @@ if [ "$buildtype" == "dtc" ]; then
 	export tail="dtc"
 elif [ "$buildtype" == "clang" ]; then
 	export toolchain=~/CLANG
-	export gcc_path=~/GCC_COMPILER/bin/aarch64-linux-gnu-
+	export gcc_path=~/GCC_COMPILER/bin/aarch64-linux-android-
 	rm -rf ~/GCC_COMPILER > /dev/null
 	git clone https://github.com/najahiiii/aarch64-linux-gnu.git -b 4.9-mirror --depth=1 ~/GCC_COMPILER
 	rm -rf $toolchain > /dev/null
