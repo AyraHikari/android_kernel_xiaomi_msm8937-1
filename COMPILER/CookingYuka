@@ -34,7 +34,7 @@ elif [ "$buildtype" == "clang" ]; then
 	export tail="clang"
 elif [ "$buildtype" == "gcc" ]; then
 	export toolchain=none
-	export gcc_path=~/GCC_COMPILER/bin/aarch64-elf-
+	export gcc_path=~/GCC_COMPILER/bin/aarch64-linux-android-
 	rm -rf ~/GCC_COMPILER > /dev/null
 	git clone https://github.com/najahiiii/aarch64-linux-gnu.git -b 4.9-mirror --depth=1 ~/GCC_COMPILER
 	export build_tags="#Ayra #GCC"
