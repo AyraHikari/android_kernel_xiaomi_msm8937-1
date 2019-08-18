@@ -22,6 +22,7 @@ steps:
       kernelname: Ayra Kernel
       versi: v3.18.140
       unified: true
+      buildtype: gcc
 
     commands:
       - bash COMPILER/CookingYuka
