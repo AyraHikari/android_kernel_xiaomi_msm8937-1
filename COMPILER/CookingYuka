@@ -36,7 +36,7 @@ elif [ "$buildtype" == "gcc" ]; then
 	export toolchain=none
 	export gcc_path=~/GCC_COMPILER/bin/aarch64-elf-
 	rm -rf ~/GCC_COMPILER > /dev/null
-	git clone https://github.com/najahiiii/priv-toolchains -b elf/gcc-9.2.0/arm64 --depth=1 ~/GCC_COMPILER
+	git clone https://github.com/najahiiii/aarch64-linux-gnu.git -b 4.9-mirror --depth=1 ~/GCC_COMPILER
 	export build_tags="#Ayra #GCC"
 	export tail="gcc"
 fi
