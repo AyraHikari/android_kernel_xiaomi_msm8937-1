@@ -15,7 +15,7 @@ if [ "$buildtype" == "dtc" ]; then
 	export toolchain=~/DTC
 	export gcc_path=~/GCC_COMPILER/bin/aarch64-linux-gnu-
 	rm -rf ~/GCC_COMPILER > /dev/null
-	git clone -q -j32 https://github.com/najahiiii/priv-toolchains.git --depth=1 -b non-elf/arm64 ~/GCC_COMPILER
+	git clone https://github.com/najahiiii/aarch64-linux-gnu.git -b 4.9-mirror --depth=1 ~/GCC_COMPILER
 	rm -rf $toolchain > /dev/null
 	git clone https://github.com/NusantaraDevs/DragonTC.git --depth=1 $toolchain
 	export build_tags="#Ayra #DragonTC #DTC"
@@ -24,7 +24,7 @@ elif [ "$buildtype" == "clang" ]; then
 	export toolchain=~/CLANG
 	export gcc_path=~/GCC_COMPILER/bin/aarch64-linux-gnu-
 	rm -rf ~/GCC_COMPILER > /dev/null
-	git clone -q -j32 https://github.com/najahiiii/priv-toolchains.git --depth=1 -b non-elf/arm64 ~/GCC_COMPILER
+	git clone https://github.com/najahiiii/aarch64-linux-gnu.git -b 4.9-mirror --depth=1 ~/GCC_COMPILER
 	rm -rf $toolchain > /dev/null
 	wget -q https://kdrag0n.dev/files/redirector/proton_clang-latest.tar.zst
 	tar -I zstd -xf proton_clang-latest.tar.zst
