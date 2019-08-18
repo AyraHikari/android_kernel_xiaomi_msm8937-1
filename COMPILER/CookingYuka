@@ -2,7 +2,7 @@ tanggal=$(date +"%d%m%y")
 string1=$(date +"%H:%M:%S")
 StartDate=$(date -u -d "$string1" +"%s")
 
-zipname=Yuka-Kernel-$tanggal-$versi-$device.zip
+zipname=Ayra-Kernel-$tanggal-$versi-$device.zip
 pin=no
 
 rm $anykerneldir/Image.gz-dtb -f > /dev/null
@@ -14,14 +14,14 @@ gcc_path=~/GCC_COMPILER/bin/aarch64-elf-
 rm -rf ~/GCC_COMPILER > /dev/null
 git clone https://github.com/najahiiii/priv-toolchains -b elf/gcc-9.2.0/arm64 --depth=1 ~/GCC_COMPILER
 toolchain=none
-export build_tags="#Yuka #GCC"
+export build_tags="#Ayra #GCC"
 
 
 if [ "$buildtype" == "dtc" ]; then
 	toolchain=~/DTC
 	rm -rf $toolchain > /dev/null
 	git clone https://github.com/NusantaraDevs/DragonTC.git --depth=1 $toolchain
-	export build_tags="#Yuka #DragonTC #DTC"
+	export build_tags="#Ayra #DragonTC #DTC"
 elif [ "$buildtype" == "clang" ]; then
 	toolchain=~/CLANG
 	rm -rf $toolchain > /dev/null
@@ -29,7 +29,7 @@ elif [ "$buildtype" == "clang" ]; then
 	tar -I zstd -xf proton_clang-latest.tar.zst
 	rm proton_clang-latest.tar.zst
 	mv proton_clang-* $toolchain
-	export build_tags="#Yuka #Proton #Clang"
+	export build_tags="#Ayra #Proton #Clang"
 fi
 
 
@@ -64,7 +64,7 @@ if [ "$toolchain" != "none" ]; then
 	echo "> Build version is: $KBUILD_COMPILER_STRING"
 	export KERNEL_BUILD=$KBUILD_COMPILER_STRING
 else
-	export KERNEL_BUILD="Yuka GCC-9.2.0"
+	export KERNEL_BUILD="Ayra GCC-9.2.0"
 fi
 
 export ARCH=arm64
@@ -107,6 +107,6 @@ elapsetime=$(date -u -d "0 $FinalDate sec - $StartDate sec" +"%H:%M:%S")
 
 export tempid=$(curl -s -F chat_id=$targetgrup -F document=@"$(echo *.zip)" -F parse_mode="markdown" https://api.telegram.org/bot$token/sendDocument | python3 -c "import json, sys; print(str(json.load(sys.stdin)['result']['message_id']))")
 
-curl -s -X POST https://api.telegram.org/bot$token/editMessageCaption?chat_id=$targetgrup -d "message_id=$tempid&parse_mode=markdown&caption=%60$(date '+%H:%M:%S - %d %b %Y')%60%0D%0A🌺 *Yuka Kernel* build $versi has done!%0A%0A✅ Status: _Successfully_%0A👨‍💻 By: [Ayra Hikari](tg://user?id=388576209)%0A🆚 Version: $versi ($KERNEL_BUILD)%0A📲 Device: $device%0A⏰ Time elapse: $elapsetime seconds%0A%0A$build_tags" > /dev/null
+curl -s -X POST https://api.telegram.org/bot$token/editMessageCaption?chat_id=$targetgrup -d "message_id=$tempid&parse_mode=markdown&caption=%60$(date '+%H:%M:%S - %d %b %Y')%60%0D%0A🌺 *Ayra Kernel* build $versi has done!%0A%0A✅ Status: _Successfully_%0A👨‍💻 By: [Ayra Hikari](tg://user?id=388576209)%0A🆚 Version: $versi ($KERNEL_BUILD)%0A📲 Device: $device%0A⏰ Time elapse: $elapsetime seconds%0A%0A$build_tags" > /dev/null
 
 echo [ Cooking done! ]
